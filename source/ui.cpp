@@ -143,8 +143,8 @@ static ImGuiID s_tick_panel_master() {
         static char dist_str[10] = {};
 
         if (ImGui::InputText("Distance", dist_str, 10, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            char cmd_str[20] = {};
-            sprintf(cmd_str, "make_axes(%s)", dist_str);
+            char cmd_str[40] = {};
+            sprintf_s(cmd_str, "make_axes(%s)", dist_str);
             begin_controller_cmd(cmd_str);
             finish_controller_cmd();
             
@@ -154,8 +154,8 @@ static ImGuiID s_tick_panel_master() {
         ImGui::SameLine();
 
         if (ImGui::Button("OK")) {
-            char cmd_str[20] = {};
-            sprintf(cmd_str, "make_axes(%s)", dist_str);
+            char cmd_str[40] = {};
+            sprintf_s(cmd_str, "make_axes(%s)", dist_str);
             begin_controller_cmd(cmd_str);
             finish_controller_cmd();
             ImGui::CloseCurrentPopup();
@@ -171,10 +171,10 @@ static ImGuiID s_tick_panel_master() {
     }
 
     if (ImGui::BeginPopupModal("Choose record information")) {
+        ImGui::Checkbox("Frame ID", &g_record_settings.frame_id);
+        ImGui::Checkbox("Time", &g_record_settings.btime);
         ImGui::Checkbox("X Coordinate", &g_record_settings.xcoord);
         ImGui::Checkbox("Y Coordinate", &g_record_settings.ycoord);
-        ImGui::Checkbox("Time", &g_record_settings.btime);
-        ImGui::Checkbox("Frame ID", &g_record_settings.frame_id);
 
         if (ImGui::Button("Close")) {
             ImGui::CloseCurrentPopup();
@@ -210,9 +210,12 @@ static void s_tick_panel_file_browser() {
 
     if (file_dialog.HasSelected()) {
         //printf("%s\n", file_dialog.GetSelected().string().c_str());
-
-        static char cmdbuf[80] = {};
-        sprintf(cmdbuf, "load_file(\"%s\")", file_dialog.GetSelected().string().c_str());
+        static char cmdbuf[150] = {};
+        sprintf_s(cmdbuf, "load_file(\"%s\")", file_dialog.GetSelected().string().c_str());
+        for (uint32_t i = 0; i < strlen(cmdbuf); ++i) {
+            if (cmdbuf[i] == '\\')
+                cmdbuf[i] = '/';
+        }
 
         begin_controller_cmd(cmdbuf);
         finish_controller_cmd();

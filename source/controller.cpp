@@ -30,7 +30,7 @@ void init_controller() {
 
 void submit_cmdstr(const char *cmdstr) {
     static char actual_cmd[100] = {};
-    sprintf(actual_cmd, "ret = %s", cmdstr);
+    sprintf_s(actual_cmd, "ret = %s", cmdstr);
 
     int32_t error = luaL_loadbuffer(g_lua_state, actual_cmd, strlen(actual_cmd), actual_cmd) ||
         lua_pcall(g_lua_state, 0, 0, 0);

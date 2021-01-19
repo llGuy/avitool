@@ -35,9 +35,12 @@ static struct {
 
     im_video_panel_info_t *panel_info;
     im_axes_info_t *axes_info;
+
+    char* line_to_free;
 } video;
 
 void init_video_viewer() {
+    video.line_to_free = NULL;
     video.is_loaded = 0;
     record.points.reserve(100);
     video.panel_info = new im_video_panel_info_t;
@@ -76,6 +79,8 @@ static void s_fill_texture(uint32_t frame_id) {
             GL_UNSIGNED_BYTE,
             frame.data);
     }
+
+    frame.release();
 }
 
 static void s_make_texture_out_of_video(uint32_t width, uint32_t height) {
@@ -91,7 +96,7 @@ static void s_make_texture_out_of_video(uint32_t width, uint32_t height) {
 }
 
 int32_t cmd_load_file(const char *file) {
-    char msg[100] = {};
+    static char msg[300] = {};
 
     if (video.current_capture.isOpened()) {
         // Need to make sure that nothing has been opened
@@ -102,14 +107,14 @@ int32_t cmd_load_file(const char *file) {
     video.current_capture.open(file);
 
     if (!video.current_capture.isOpened()) {
-        sprintf(msg, "Failed to load from %s\n", file);
+        sprintf_s(msg, "Failed to load from %s\n", file);
         print_to_controller_output(msg);
         video.is_loaded = 0;
 
         return 0;
     }
     else {
-        sprintf(msg, "Loaded from %s\n", file);
+        sprintf_s(msg, "Loaded from %s\n", file);
         print_to_controller_output(msg);
 
         video.resolution = cv::Size(
@@ -126,7 +131,7 @@ int32_t cmd_load_file(const char *file) {
         video.fps = video.current_capture.get(cv::CAP_PROP_FPS);
         video.length = (float)video.frame_count / (float)video.fps;
 
-        sprintf(
+        sprintf_s(
             msg,
             "Resolution: %dx%d\nFrame count: %d\nLength: %.1f\nFPS: %d\n",
             video.resolution.width,
@@ -231,23 +236,23 @@ const char *cmd_add_record_point(int x, int y, int max_x, int max_y) {
         p.axis_space_pos = scaled;
     }
 
-    char *info_str = new char[30];
-    memset(info_str, 0, sizeof(char) * 30);
+    char *info_str = new char[100];
+    memset(info_str, 0, sizeof(char) * 100);
 
     if (g_record_settings.frame_id) {
-        sprintf(info_str, "%d,", video.current_frame.frame);
+        sprintf_s(info_str, 100, "%d,", video.current_frame.frame);
     }
     if (g_record_settings.btime) {
         uint32_t len = strlen(info_str);
-        sprintf(info_str + len, "%f,", video.current_frame.time);
+        sprintf_s(info_str + len, 100, "%f,", video.current_frame.time);
     }
     if (g_record_settings.xcoord) {
         uint32_t len = strlen(info_str);
-        sprintf(info_str + len, "%f,", p.axis_space_pos.x);
+        sprintf_s(info_str + len, 100, "%f,", p.axis_space_pos.x);
     }
     if (g_record_settings.ycoord) {
         uint32_t len = strlen(info_str);
-        sprintf(info_str + len, "%f,", p.axis_space_pos.y);
+        sprintf_s(info_str + len, 100, "%f,", p.axis_space_pos.y);
     }
 
     uint32_t len = strlen(info_str);
@@ -256,6 +261,8 @@ const char *cmd_add_record_point(int x, int y, int max_x, int max_y) {
     }
 
     record.points.push_back(p);
+
+    video.line_to_free = info_str;
 
     return info_str;
 }
@@ -325,7 +332,7 @@ static void s_video_slider() {
         int time_milli = (int)(progress * 1000.0f);
 
         static char cmdbuf[80] = {};
-        sprintf(cmdbuf, "goto_video_time(%d)", time_milli);
+        sprintf_s(cmdbuf, "goto_video_time(%d)", time_milli);
 
         begin_controller_cmd(cmdbuf, 0);
         finish_controller_cmd(0);
@@ -448,6 +455,11 @@ void render_panel_video_viewer(ImGuiID master) {
     video.panel_info->is_focused = ImGui::IsWindowFocused();
 
     ImGui::End();
+
+    if (video.line_to_free) {
+        free(video.line_to_free);
+        video.line_to_free = NULL;
+    }
 }
 
 void im_record_proc(void *p) {
@@ -463,7 +475,7 @@ void im_record_proc(void *p) {
             int y = mouse_pos.y - min.y;
 
             static char cmdbuf[80] = {};
-            sprintf(cmdbuf, "add_record_point(%d, %d, %d, %d)", x, y, (int)size.x, (int)size.y);
+            sprintf_s(cmdbuf, "add_record_point(%d, %d, %d, %d)", x, y, (int)size.x, (int)size.y);
 
             begin_controller_cmd(cmdbuf);
             finish_controller_cmd();

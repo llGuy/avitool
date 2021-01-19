@@ -24,7 +24,7 @@ static void s_error_and_exit(const char *msg) {
 void init_context() {
     { // Initialise GLFW and GLEW
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
-            s_error_and_exit("Failed to initialise GLFW\n");
+            s_error_and_exit("Failed to initialise SDL\n");
 
         // May need to change this for MACOS
         ctx.glsl_version = "#version 130";
@@ -38,7 +38,7 @@ void init_context() {
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
         SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-        ctx.window = SDL_CreateWindow("AnalAVI", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+        ctx.window = SDL_CreateWindow("AVITool", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
         ctx.gl_ctx = SDL_GL_CreateContext(ctx.window);
         SDL_GL_MakeCurrent(ctx.window, ctx.gl_ctx);
         SDL_GL_SetSwapInterval(1);

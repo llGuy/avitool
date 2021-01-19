@@ -3,7 +3,6 @@
 #include <opencv2/highgui.hpp>
 #include <imfilebrowser.h>
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <opencv2/core.hpp>     // Basic OpenCV structures (cv::Mat, Scalar)
 #include <opencv2/videoio.hpp>
 
@@ -15,7 +14,15 @@
 #include "video_viewer.hpp"
 #include "localisation.hpp"
 
+#if _WIN32
+int WinMain(
+    HINSTANCE hInstance,
+    HINSTANCE hPrevInstance,
+    LPSTR     lpCmdLine,
+    int       nShowCmd) {
+#else
 int main() {
+#endif
     init_languages();
     init_input_modes();
     prepare_imgui();
