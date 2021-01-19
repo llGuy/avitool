@@ -4,8 +4,8 @@ project(aviapplication)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_VERBOSE_MAKEFILE on)
-set(CMAKE_CXX_COMPILER "g++-8")
-# set(CMAKE_CXX_STANDARD 17)
+# set(CMAKE_CXX_COMPILER "g++-8")
+set(CMAKE_CXX_STANDARD 17)
 
 find_package(OpenCV REQUIRED)
 find_package(SDL2 REQUIRED)
@@ -26,8 +26,6 @@ include_directories("dependencies/lua/")
 link_libraries("SDL2" "GLEW" "GL")
 link_libraries("${OpenCV_LIBS}")
 link_libraries("${SDL2_LIBS}")
-
-add_compile_options("-std=c++17" "-lstdc++fs")
 
 add_library(lua
   "dependencies/lua/lapi.c"
@@ -65,4 +63,4 @@ add_library(lua
 
 add_executable(avitool "${SOURCES}")
 target_link_libraries(avitool lua)
-target_link_libraries(avitool stdc++fs)
+target_link_libraries(avitool "stdc++fs")

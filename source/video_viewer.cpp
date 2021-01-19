@@ -107,14 +107,14 @@ int32_t cmd_load_file(const char *file) {
     video.current_capture.open(file);
 
     if (!video.current_capture.isOpened()) {
-        sprintf_s(msg, "Failed to load from %s\n", file);
+        sprintf(msg, "Failed to load from %s\n", file);
         print_to_controller_output(msg);
         video.is_loaded = 0;
 
         return 0;
     }
     else {
-        sprintf_s(msg, "Loaded from %s\n", file);
+        sprintf(msg, "Loaded from %s\n", file);
         print_to_controller_output(msg);
 
         video.resolution = cv::Size(
@@ -131,7 +131,7 @@ int32_t cmd_load_file(const char *file) {
         video.fps = video.current_capture.get(cv::CAP_PROP_FPS);
         video.length = (float)video.frame_count / (float)video.fps;
 
-        sprintf_s(
+        sprintf(
             msg,
             "Resolution: %dx%d\nFrame count: %d\nLength: %.1f\nFPS: %d\n",
             video.resolution.width,
@@ -240,19 +240,19 @@ const char *cmd_add_record_point(int x, int y, int max_x, int max_y) {
     memset(info_str, 0, sizeof(char) * 100);
 
     if (g_record_settings.frame_id) {
-        sprintf_s(info_str, 100, "%d,", video.current_frame.frame);
+        sprintf(info_str, "%d,", video.current_frame.frame);
     }
     if (g_record_settings.btime) {
         uint32_t len = strlen(info_str);
-        sprintf_s(info_str + len, 100, "%f,", video.current_frame.time);
+        sprintf(info_str + len, "%f,", video.current_frame.time);
     }
     if (g_record_settings.xcoord) {
         uint32_t len = strlen(info_str);
-        sprintf_s(info_str + len, 100, "%f,", p.axis_space_pos.x);
+        sprintf(info_str + len, "%f,", p.axis_space_pos.x);
     }
     if (g_record_settings.ycoord) {
         uint32_t len = strlen(info_str);
-        sprintf_s(info_str + len, 100, "%f,", p.axis_space_pos.y);
+        sprintf(info_str + len, "%f,", p.axis_space_pos.y);
     }
 
     uint32_t len = strlen(info_str);
@@ -332,7 +332,7 @@ static void s_video_slider() {
         int time_milli = (int)(progress * 1000.0f);
 
         static char cmdbuf[80] = {};
-        sprintf_s(cmdbuf, "goto_video_time(%d)", time_milli);
+        sprintf(cmdbuf, "goto_video_time(%d)", time_milli);
 
         begin_controller_cmd(cmdbuf, 0);
         finish_controller_cmd(0);
@@ -457,7 +457,7 @@ void render_panel_video_viewer(ImGuiID master) {
     ImGui::End();
 
     if (video.line_to_free) {
-        free(video.line_to_free);
+        delete[] video.line_to_free;
         video.line_to_free = NULL;
     }
 }
@@ -475,7 +475,7 @@ void im_record_proc(void *p) {
             int y = mouse_pos.y - min.y;
 
             static char cmdbuf[80] = {};
-            sprintf_s(cmdbuf, "add_record_point(%d, %d, %d, %d)", x, y, (int)size.x, (int)size.y);
+            sprintf(cmdbuf, "add_record_point(%d, %d, %d, %d)", x, y, (int)size.x, (int)size.y);
 
             begin_controller_cmd(cmdbuf);
             finish_controller_cmd();

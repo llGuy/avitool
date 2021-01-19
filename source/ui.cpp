@@ -144,7 +144,7 @@ static ImGuiID s_tick_panel_master() {
 
         if (ImGui::InputText("Distance", dist_str, 10, ImGuiInputTextFlags_EnterReturnsTrue)) {
             char cmd_str[40] = {};
-            sprintf_s(cmd_str, "make_axes(%s)", dist_str);
+            sprintf(cmd_str, "make_axes(%s)", dist_str);
             begin_controller_cmd(cmd_str);
             finish_controller_cmd();
             
@@ -155,7 +155,7 @@ static ImGuiID s_tick_panel_master() {
 
         if (ImGui::Button("OK")) {
             char cmd_str[40] = {};
-            sprintf_s(cmd_str, "make_axes(%s)", dist_str);
+            sprintf(cmd_str, "make_axes(%s)", dist_str);
             begin_controller_cmd(cmd_str);
             finish_controller_cmd();
             ImGui::CloseCurrentPopup();
@@ -211,7 +211,7 @@ static void s_tick_panel_file_browser() {
     if (file_dialog.HasSelected()) {
         //printf("%s\n", file_dialog.GetSelected().string().c_str());
         static char cmdbuf[150] = {};
-        sprintf_s(cmdbuf, "load_file(\"%s\")", file_dialog.GetSelected().string().c_str());
+        sprintf(cmdbuf, "load_file(\"%s\")", file_dialog.GetSelected().string().c_str());
         for (uint32_t i = 0; i < strlen(cmdbuf); ++i) {
             if (cmdbuf[i] == '\\')
                 cmdbuf[i] = '/';
