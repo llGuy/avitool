@@ -1,8 +1,10 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
-#include "controller.hpp"
+#include "ctrl_cmd.hpp"
 #include "va_analyser.hpp"
+
+namespace ctrl {
 
 lua_State *g_lua_state = NULL;
 static const char *cmd_names[(uint32_t)command_type_t::INVALID];
@@ -64,4 +66,6 @@ void push_to_lua_stack<const char *>(const char *value){
 template <>
 void push_to_lua_stack<int32_t>(int32_t value){
     return lua_pushnumber(g_lua_state, value);
+}
+
 }

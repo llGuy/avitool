@@ -1,6 +1,8 @@
 #include <stack>
 #include <stdint.h>
-#include "input_mode.hpp"
+#include "app_context.hpp"
+
+namespace app {
 
 static std::stack<input_mode_t> modes;
 
@@ -42,4 +44,6 @@ void call_input_proc() {
 
 input_mode_t get_top_input_mode() {
     return modes.top();
+}
+
 }

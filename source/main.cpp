@@ -1,16 +1,11 @@
 #include <imgui.h>
-#include "controller.hpp"
-#include <opencv2/highgui.hpp>
-#include <imfilebrowser.h>
-#include <GL/glew.h>
-#include <opencv2/core.hpp>     // Basic OpenCV structures (cv::Mat, Scalar)
-#include <opencv2/videoio.hpp>
+#include "ctrl_render.hpp"
+#include "ctrl_cmd.hpp"
 
 #include <stdlib.h>
 
-#include "ui.hpp"
-#include "context.hpp"
-#include "input_mode.hpp"
+#include "app_context.hpp"
+#include "out_editor.hpp"
 #include "va_analyser.hpp"
 #include "localisation.hpp"
 
@@ -24,17 +19,24 @@ int WinMain(
 int main() {
 #endif
     init_languages();
-    init_input_modes();
-    prepare_imgui();
-    init_context();
+
+    app::init_context();
     va::init();
-    init_controller();
+    out::init();
+    ctrl::init_controller();
+    ctrl::init_controller_display();
 
     { // Main loop
-        while (is_running()) {
-            begin_frame();
-            tick_gui();
-            end_frame();
+        while (app::is_running()) {
+            auto master_id = app::begin_frame();
+
+            ctrl::render_and_tick(master_id);
+            out::render_and_tick(master_id);
+            va::render_and_tick(master_id);
+
+            app::call_input_proc();
+
+            app::end_frame();
         }
     }
 

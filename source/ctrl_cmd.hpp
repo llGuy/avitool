@@ -9,6 +9,8 @@ extern "C" {
     #include <lualib.h>
 }
 
+namespace ctrl {
+
 enum class command_type_t : uint32_t {
     LOAD_FILE,
     GOTO_VIDEO_FRAME,
@@ -63,10 +65,12 @@ int32_t call_cmd_function(Ret (* proc)(T ...)) {
         std::make_integer_sequence<int32_t, sizeof...(T)>());
 }
 
+}
+
 #define DECLARE_CMD_PROC(return_type, name, ...)        \
     return_type name(__VA_ARGS__); \
-    inline int32_t name##_impl(struct lua_State *) { return call_cmd_function(name); }
+    inline int32_t name##_impl(struct lua_State *) { return ctrl::call_cmd_function(name); }
 
 #define BIND_CMD_TO_PROC(type, func)                    \
-    lua_pushcfunction(g_lua_state, func##_impl);        \
-    lua_setglobal(g_lua_state, cmd_type_to_str(type))
+    lua_pushcfunction(ctrl::g_lua_state, func##_impl);                  \
+    lua_setglobal(ctrl::g_lua_state, ctrl::cmd_type_to_str(type))

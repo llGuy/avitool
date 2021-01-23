@@ -4,8 +4,11 @@
 #include <GL/glew.h>
 #include <SDL.h>
 #include <stdlib.h>
+#include "app_context.hpp"
 #include <imgui_impl_sdl.h>
 #include <imgui_impl_opengl3.h>
+
+namespace app {
 
 static struct {
 
@@ -17,11 +20,31 @@ static struct {
 } ctx;
 
 static void s_error_and_exit(const char *msg) {
-    LOG_ERROR("Failed to initialise GLFW\n");
+    LOG_ERROR(msg);
     exit(-1);
 }
 
 void init_context() {
+    init_input_modes();
+
+    { // Prepare UI stuff with ImGui
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO &io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+        ImGui::StyleColorsDark();
+
+        ImGuiStyle &style =ImGui::GetStyle();
+        style.WindowRounding = 0.0f;
+        style.FrameRounding = 0.0f;
+        style.TabRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.9f);
+        style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.07f, 0.07f, 0.07f, 1.0f);
+        ImVec4* colors = style.Colors;
+    }
+
     { // Initialise GLFW and GLEW
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
             s_error_and_exit("Failed to initialise SDL\n");
@@ -51,11 +74,11 @@ void init_context() {
         ImGui_ImplSDL2_InitForOpenGL(ctx.window, ctx.gl_ctx);
         ImGui_ImplOpenGL3_Init(ctx.glsl_version);
     }
-
+ 
     ctx.is_running = 1;
 }
 
-void begin_frame() {
+ImGuiID begin_frame() {
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {
@@ -71,9 +94,15 @@ void begin_frame() {
     
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(ctx.window);
+
+    ImGui::NewFrame();
+
+    return render_and_tick_master();
 }
 
 void end_frame() {
+    ImGui::Render();
+
     ImGuiIO &io = ImGui::GetIO();
     glViewport(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
@@ -88,4 +117,6 @@ void end_frame() {
 
 bool is_running() {
     return ctx.is_running;
+}
+
 }

@@ -2,11 +2,11 @@
 #include <imgui.h>
 #include <glm/glm.hpp>
 
-#include "ui.hpp"
 #include "va_frame.hpp"
 #include "va_record.hpp"
+#include "ctrl_cmd.hpp"
+#include "ctrl_render.hpp"
 #include "va_render.hpp"
-#include "controller.hpp"
 #include "va_analyser.hpp"
 
 namespace va {
@@ -60,8 +60,8 @@ void video_slider(const frame_t &frame, float video_length) {
         static char cmdbuf[80] = {};
         sprintf(cmdbuf, "goto_video_time(%d)", time_milli);
 
-        begin_controller_cmd(cmdbuf, 0);
-        finish_controller_cmd(0);
+        ctrl::begin_cmd(cmdbuf, 0);
+        ctrl::end_cmd(0);
     }
 }
 

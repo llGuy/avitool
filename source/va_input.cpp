@@ -1,6 +1,7 @@
-#include "ui.hpp"
-#include "input_mode.hpp"
-#include "controller.hpp"
+#include "app_context.hpp"
+#include "ctrl_render.hpp"
+#include "ctrl_cmd.hpp"
+#include "out_editor.hpp"
 #include "va_analyser.hpp"
 #include "va_render.hpp"
 #include "va_input.hpp"
@@ -20,11 +21,11 @@ void handle_record_input(video_t *video, video_panel_render_info_t *data) {
             static char cmdbuf[80] = {};
             sprintf(cmdbuf, "add_record_point(%d, %d, %d, %d)", x, y, (int)size.x, (int)size.y);
 
-            begin_controller_cmd(cmdbuf);
-            finish_controller_cmd();
+            ctrl::begin_cmd(cmdbuf);
+            ctrl::end_cmd();
 
-            const char *point_str = get_return_value<const char *>();
-            add_line_to_editor(point_str);
+            const char *point_str = ctrl::get_return_value<const char *>();
+            out::add_line_to_editor(point_str);
         }
     }
 }
@@ -86,7 +87,7 @@ void handle_make_axes_input(axes_t *axes, video_panel_render_info_t *panel) {
             ImVec2(right.x, right.y),
             ImGui::ColorConvertFloat4ToU32(ImVec4(1.0f, 1.0f, 1.0f, 1.0f)));
 
-        pop_input_mode();
+        app::pop_input_mode();
     }
 }
 

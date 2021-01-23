@@ -1,13 +1,11 @@
 #include <SDL.h>
 #include "utility.hpp"
-#include "ui.hpp"
 #include <imgui.h>
 #include <glm/glm.hpp>
 #include "va_analyser.hpp"
 #include "va_render.hpp"
 #include "va_frame.hpp"
-#include "input_mode.hpp"
-#include "controller.hpp"
+#include "app_context.hpp"
 #include "va_input.hpp"
 #include "va_commands.hpp"
 #include <GL/glew.h>
@@ -31,8 +29,8 @@ static void s_handle_make_axes_input(void *);
 void init() {
     current_video.is_loaded = 0;
 
-    bind_proc_to_input_mode(input_mode_t::RECORD, s_handle_record_input, NULL);
-    bind_proc_to_input_mode(input_mode_t::MAKE_AXES, s_handle_make_axes_input, NULL);
+    bind_proc_to_input_mode(app::input_mode_t::RECORD, s_handle_record_input, NULL);
+    bind_proc_to_input_mode(app::input_mode_t::MAKE_AXES, s_handle_make_axes_input, NULL);
 
     record_settings.xcoord = 1;
     record_settings.ycoord = 1;

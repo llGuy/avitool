@@ -4,9 +4,9 @@
 #include <glm/glm.hpp>
 
 #include <imgui.h>
-#include "controller.hpp"
 
 #include "va_record.hpp"
+#include "ctrl_cmd.hpp"
 
 // Video analyser
 namespace va {

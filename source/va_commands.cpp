@@ -1,8 +1,9 @@
-#include "ui.hpp"
 #include "va_frame.hpp"
 #include "va_analyser.hpp"
 #include "va_commands.hpp"
-#include "input_mode.hpp"
+#include "app_context.hpp"
+
+#include "ctrl_render.hpp"
 
 #include "utility.hpp"
 #include <opencv2/core.hpp>
@@ -54,14 +55,14 @@ int32_t load_file(const char *file, video_t *current_video) {
 
     if (!vc->isOpened()) {
         sprintf(msg, "Failed to load from %s\n", file);
-        print_to_controller_output(msg);
+        ctrl::log(msg);
         current_video->is_loaded = 0;
 
         return 0;
     }
     else {
         sprintf(msg, "Loaded from %s\n", file);
-        print_to_controller_output(msg);
+        ctrl::log(msg);
 
         auto res = cv::Size(
             (int)vc->get(cv::CAP_PROP_FRAME_WIDTH),
@@ -84,7 +85,7 @@ int32_t load_file(const char *file, video_t *current_video) {
             current_video->length,
             current_video->fps);
 
-        print_to_controller_output(msg);
+        ctrl::log(msg);
 
         current_video->frame->init(res.width, res.height);
         s_update_frame_tx(0, current_video->impl, current_video->frame, current_video->fps);
@@ -117,8 +118,8 @@ int32_t goto_video_time(int time, video_t *current_video) {
 
 int32_t begin_record(bool is_video_loaded) {
     if (is_video_loaded) {
-        print_to_controller_output("Began recording...");
-        push_input_mode(input_mode_t::RECORD);
+        ctrl::log("Began recording...");
+        push_input_mode(app::input_mode_t::RECORD);
     }
 
     return 0;
@@ -155,9 +156,9 @@ const char *add_record_point(
 }
 
 int32_t end_record() {
-    if (get_top_input_mode() == input_mode_t::RECORD) {
-        print_to_controller_output("Finished recording");
-        pop_input_mode();
+    if (app::get_top_input_mode() == app::input_mode_t::RECORD) {
+        ctrl::log("Finished recording");
+        app::pop_input_mode();
     }
 
     return 0;
@@ -168,7 +169,7 @@ int32_t make_axes(int dist, axes_t *axes) {
     axes->is_being_made = 1;
     axes->right_length = (float)dist;
 
-    push_input_mode(input_mode_t::MAKE_AXES);
+    push_input_mode(app::input_mode_t::MAKE_AXES);
 
     return 0;
 }
