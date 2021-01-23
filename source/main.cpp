@@ -11,7 +11,7 @@
 #include "ui.hpp"
 #include "context.hpp"
 #include "input_mode.hpp"
-#include "video_viewer.hpp"
+#include "va_analyser.hpp"
 #include "localisation.hpp"
 
 #if _WIN32
@@ -27,7 +27,7 @@ int main() {
     init_input_modes();
     prepare_imgui();
     init_context();
-    init_video_viewer();
+    va::init();
     init_controller();
 
     { // Main loop

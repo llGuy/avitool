@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 #include "controller.hpp"
-#include "video_viewer.hpp"
+#include "va_analyser.hpp"
 
 lua_State *g_lua_state = NULL;
 static const char *cmd_names[(uint32_t)command_type_t::INVALID];
@@ -18,7 +18,7 @@ void init_controller() {
     cmd_names[(uint32_t)command_type_t::ADD_RECORD_POINT] = "add_record_point";
     cmd_names[(uint32_t)command_type_t::END_RECORD] = "end_record";
     cmd_names[(uint32_t)command_type_t::MAKE_AXES] = "make_axes";
-
+ 
     BIND_CMD_TO_PROC(command_type_t::LOAD_FILE, cmd_load_file);
     BIND_CMD_TO_PROC(command_type_t::GOTO_VIDEO_FRAME, cmd_goto_video_frame);
     BIND_CMD_TO_PROC(command_type_t::GOTO_VIDEO_TIME, cmd_goto_video_time);

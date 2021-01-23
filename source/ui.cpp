@@ -6,7 +6,7 @@
 #include <imfilebrowser.h>
 
 #include "controller.hpp"
-#include "video_viewer.hpp"
+#include "va_analyser.hpp"
 
 #include <TextEditor.h>
 
@@ -171,10 +171,7 @@ static ImGuiID s_tick_panel_master() {
     }
 
     if (ImGui::BeginPopupModal("Choose record information")) {
-        ImGui::Checkbox("Frame ID", &g_record_settings.frame_id);
-        ImGui::Checkbox("Time", &g_record_settings.btime);
-        ImGui::Checkbox("X Coordinate", &g_record_settings.xcoord);
-        ImGui::Checkbox("Y Coordinate", &g_record_settings.ycoord);
+        va::handle_settings_checkboxes();
 
         if (ImGui::Button("Close")) {
             ImGui::CloseCurrentPopup();
@@ -247,7 +244,7 @@ static void s_tick_panel_output(ImGuiID master) {
     ImGui::SetNextWindowDockID(master, ImGuiCond_FirstUseEver);
     ImGui::Begin("Output");
 
-    editor.SetReadOnly(should_block_output_io());
+    editor.SetReadOnly(va::should_block_output_io());
 
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("Edit")) {
@@ -290,7 +287,7 @@ void tick_gui() {
     s_tick_panel_file_browser();
     s_tick_panel_output(master_id);
 
-    render_panel_video_viewer(master_id);
+    va::render_and_tick(master_id);
 
     call_input_proc();
     // execute_commands();

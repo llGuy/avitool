@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION "3.2")
 project(aviapplication)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_VERBOSE_MAKEFILE on)
-# set(CMAKE_CXX_COMPILER "g++-8")
+set(CMAKE_CXX_COMPILER "g++-8")
+set(CMAKE_C_COMPILER "gcc-8")
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(OpenCV REQUIRED)
